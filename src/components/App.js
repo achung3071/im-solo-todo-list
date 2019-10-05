@@ -9,7 +9,7 @@ const { Content } = Layout;
 export default class App extends React.Component {
   render() {
     return (
-      <Layout style={{ minHeight: "100vh" }}>
+      <Layout style={{ height: "100vh" }}>
         <Nav />
         <Layout>
           <Content style={{ margin: "16px" }}>

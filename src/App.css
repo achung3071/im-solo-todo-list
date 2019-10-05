@@ -1,4 +1,49 @@
 @import "~antd/dist/antd.css";
+
 .ant-input {
   border-radius: 15px;
+}
+
+.task-adder {
+  padding-bottom: 20px;
+}
+
+.task-adder .task-input {
+  display: inline-block;
+  width: calc(100% - 50px);
+}
+
+.task-adder .add-task-button {
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+}
+
+.task {
+  position: relative;
+  padding: 10px;
+  vertical-align: center;
+}
+
+.task:hover {
+  background-color: lightblue;
+}
+
+.task .task-info {
+  display: inline-block;
+  width: calc(100% - 40px);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.task .task-icons {
+  display: inline-block;
+  position: absolute;
+  width: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.task .task-info h2 {
+  margin: 0px;
 }
