@@ -5,17 +5,18 @@ export default function Task(props) {
   return (
     <div className="task">
       <div className="task-info">
-        <h2>{props.name}</h2>
-        Undated
+        <h2>{props.task.name}</h2>
+        {props.task.time}
       </div>
       <div className="task-icons">
         <Icon
-          type="check"
+          type={props.name === "All Tasks" ? "check" : "undo"}
           style={{
             position: "absolute",
             top: "50%",
             transform: "translateY(-50%)"
           }}
+          onClick={() => props.modify(props.task)}
         />
         <Icon
           type="delete"
@@ -25,6 +26,7 @@ export default function Task(props) {
             top: "50%",
             transform: "translateY(-50%)"
           }}
+          onClick={() => props.delete(props.task)}
         />
       </div>
     </div>
