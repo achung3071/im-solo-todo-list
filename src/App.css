@@ -1,6 +1,9 @@
 @import "~antd/dist/antd.css";
+body {
+  box-sizing: border-box;
+}
 
-.ant-input {
+.sider .ant-input {
   border-radius: 15px;
 }
 

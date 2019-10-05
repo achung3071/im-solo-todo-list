@@ -7,7 +7,7 @@ const { Search } = Input;
 export default function Nav(props) {
   let folders = ["All Tasks", "Day-by-Day", "Completed"];
   return (
-    <Sider theme="dark">
+    <Sider theme="dark" className="sider">
       <Menu theme="dark" defaultSelectedKeys={["1"]}>
         <Menu.Item key="0">
           <Search
