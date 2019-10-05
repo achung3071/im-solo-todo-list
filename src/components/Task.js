@@ -3,8 +3,12 @@ import { Icon } from "antd";
 
 export default function Task(props) {
   return (
-    <div className="task">
-      <div className="task-info">
+    <div className="task" style={{ backgroundColor: props.color }}>
+      <div
+        className="task-info"
+        onClick={() => props.click(props.task)}
+        style={{ cursor: "pointer" }}
+      >
         <h2>{props.task.name}</h2>
         {props.task.time}
       </div>

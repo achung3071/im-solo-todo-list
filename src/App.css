@@ -28,10 +28,6 @@ body {
   vertical-align: center;
 }
 
-.task:hover {
-  background-color: lightblue;
-}
-
 .task .task-info {
   display: inline-block;
   width: calc(100% - 40px);

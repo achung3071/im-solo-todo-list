@@ -4,72 +4,92 @@ import TaskList from "./TaskList";
 import TaskDetails from "./TaskDetails";
 import "../App.css";
 import { Layout } from "antd";
+import { throwStatement } from "@babel/types";
 const { Content } = Layout;
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDetails: false,
-      tasksInProg: [],
-      tasksCompleted: [],
+      tasks: [],
       currFolder: "All Tasks",
-      folders: ["All Tasks", "Day-by-Day", "Completed"]
+      folders: ["All Tasks", "Day-by-Day", "Completed"],
+      currTask: null
     };
     this.addTask = this.addTask.bind(this);
-    this.completeTask = this.completeTask.bind(this);
-    this.revertTask = this.revertTask.bind(this);
     this.changeFolder = this.changeFolder.bind(this);
+    this.changeTaskName = this.changeTaskName.bind(this);
+    this.clickTask = this.clickTask.bind(this);
+    this.completeTask = this.completeTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.revertTask = this.revertTask.bind(this);
   }
 
   addTask(name) {
     if (name.length === 0) return;
-    let tasks = [...this.state.tasksInProg];
-    tasks.push({ name, time: "Undated" });
-    this.setState({ tasksInProg: tasks });
+    let tasks = [...this.state.tasks];
+    tasks.push({ name, time: "Undated", status: "incomplete" });
+    this.setState({ tasks });
   }
 
   changeFolder(item) {
     let key = parseInt(item.key);
     if (key !== 0) {
       this.setState({
-        currFolder: this.state.folders[key - 1]
+        currFolder: this.state.folders[key - 1],
+        currTask: null
+      });
+    }
+  }
+
+  changeTaskName(name) {
+    let currTask = this.state.currTask;
+    let arr = this.state.tasks;
+    let taskIndex = arr.indexOf(currTask);
+    let newArr = [...arr];
+    let newTask = { ...currTask };
+    newTask.name = name;
+    newArr[taskIndex] = newTask;
+    this.setState({
+      tasks: newArr,
+      currTask: newTask
+    });
+  }
+
+  clickTask(task) {
+    if (task === this.state.currTask) {
+      this.setState({
+        currTask: null
+      });
+    } else {
+      this.setState({
+        currTask: task
       });
     }
   }
 
   completeTask(task) {
-    let taskIndex = this.state.tasksInProg.indexOf(task);
-    let inProgress = [...this.state.tasksInProg];
-    let completed = [...this.state.tasksCompleted];
-    inProgress.splice(taskIndex, 1);
-    completed.push(task);
-    this.setState({
-      tasksInProg: inProgress,
-      tasksCompleted: completed
-    });
+    let currTask = task === this.state.currTask ? null : this.state.currTask;
+    let taskIndex = this.state.tasks.indexOf(task);
+    let tasks = [...this.state.tasks];
+    tasks[taskIndex].status = "complete";
+    this.setState({ tasks, currTask });
   }
 
-  deleteTask(progressKey, task) {
-    let arr = this.state[progressKey];
-    let taskIndex = arr.indexOf(task);
-    let newArr = [...arr];
-    newArr.splice(taskIndex, 1);
-    this.setState({
-      [progressKey]: newArr
-    });
+  deleteTask(task) {
+    let currTask = task === this.state.currTask ? null : this.state.currTask;
+    let taskIndex = this.state.tasks.indexOf(task);
+    let tasks = [...this.state.tasks];
+    tasks.splice(taskIndex, 1);
+    this.setState({ tasks, currTask });
   }
 
   revertTask(task) {
-    let taskIndex = this.state.tasksCompleted.indexOf(task);
-    let inProgress = [...this.state.tasksInProg];
-    let completed = [...this.state.tasksCompleted];
-    completed.splice(taskIndex, 1);
-    inProgress.push(task);
-    this.setState({
-      tasksInProg: inProgress,
-      tasksCompleted: completed
-    });
+    let currTask = task === this.state.currTask ? null : this.state.currTask;
+    let taskIndex = this.state.tasks.indexOf(task);
+    let tasks = [...this.state.tasks];
+    tasks[taskIndex].status = "incomplete";
+    this.setState({ tasks, currTask });
   }
 
   render() {
@@ -78,24 +98,27 @@ export default class App extends React.Component {
         <Nav folders={this.state.folders} change={this.changeFolder} />
         <Layout>
           <Content style={{ margin: "16px" }}>
-            {this.state.currFolder === "All Tasks" && (
+            {
               <TaskList
-                name="All Tasks"
-                tasks={this.state.tasksInProg}
+                name={this.state.currFolder}
+                tasks={this.state.tasks}
+                currTask={this.state.currTask}
+                click={this.clickTask}
                 add={this.addTask}
-                delete={this.deleteTask.bind(this, "tasksInProg")}
-                modify={this.completeTask}
+                delete={this.deleteTask}
+                modify={
+                  this.state.currFolder === "Completed"
+                    ? this.revertTask
+                    : this.completeTask
+                }
+              />
+            }
+            {this.state.currTask && (
+              <TaskDetails
+                task={this.state.currTask}
+                changeName={this.changeTaskName}
               />
             )}
-            {this.state.currFolder === "Completed" && (
-              <TaskList
-                name="Completed"
-                tasks={this.state.tasksCompleted}
-                delete={this.deleteTask.bind(this, "tasksCompleted")}
-                modify={this.revertTask}
-              />
-            )}
-            {this.showDetails && <TaskDetails />}
           </Content>
         </Layout>
       </Layout>

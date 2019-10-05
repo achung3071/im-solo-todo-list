@@ -4,6 +4,7 @@ import TaskAdder from "./TaskAdder";
 import { Col } from "antd";
 
 export default function TaskList(props) {
+  let statusMatch = props.name === "Completed" ? "complete" : "incomplete";
   return (
     <Col
       span={12}
@@ -15,15 +16,20 @@ export default function TaskList(props) {
       }}
     >
       {props.name === "All Tasks" && <TaskAdder add={props.add} />}
-      {props.tasks.map((task, index) => (
-        <Task
-          name={props.name}
-          task={task}
-          key={index}
-          delete={props.delete}
-          modify={props.modify}
-        />
-      ))}
+      {props.tasks.map(
+        (task, index) =>
+          task.status === statusMatch && (
+            <Task
+              name={props.name}
+              task={task}
+              color={task === props.currTask ? "lightblue" : "white"}
+              click={props.click}
+              key={index}
+              delete={props.delete}
+              modify={props.modify}
+            />
+          )
+      )}
     </Col>
   );
 }

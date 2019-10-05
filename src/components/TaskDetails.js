@@ -28,6 +28,8 @@ export default function TaskDetails(props) {
         placeholder="Task name"
         size="large"
         style={{ marginBottom: "20px", height: "60px", fontSize: "25px" }}
+        onChange={e => props.changeName(e.target.value)}
+        value={props.task.name}
       />
       <DatePicker
         placeholder="Select date and time"
