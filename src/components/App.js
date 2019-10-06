@@ -4,7 +4,6 @@ import TaskList from "./TaskList";
 import TaskDetails from "./TaskDetails";
 import "../App.css";
 import { Layout } from "antd";
-import { throwStatement } from "@babel/types";
 const { Content } = Layout;
 
 export default class App extends React.Component {
@@ -18,7 +17,7 @@ export default class App extends React.Component {
     };
     this.addTask = this.addTask.bind(this);
     this.changeFolder = this.changeFolder.bind(this);
-    this.changeTaskName = this.changeTaskName.bind(this);
+    this.changeTaskInfo = this.changeTaskInfo.bind(this);
     this.clickTask = this.clickTask.bind(this);
     this.completeTask = this.completeTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
@@ -42,13 +41,13 @@ export default class App extends React.Component {
     }
   }
 
-  changeTaskName(name) {
+  changeTaskInfo(changeType, newInfo) {
     let currTask = this.state.currTask;
     let arr = this.state.tasks;
     let taskIndex = arr.indexOf(currTask);
     let newArr = [...arr];
     let newTask = { ...currTask };
-    newTask.name = name;
+    newTask[changeType] = newInfo;
     newArr[taskIndex] = newTask;
     this.setState({
       tasks: newArr,
@@ -116,7 +115,7 @@ export default class App extends React.Component {
             {this.state.currTask && (
               <TaskDetails
                 task={this.state.currTask}
-                changeName={this.changeTaskName}
+                changeInfo={this.changeTaskInfo}
               />
             )}
           </Content>

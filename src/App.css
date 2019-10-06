@@ -25,7 +25,6 @@ body {
 .task {
   position: relative;
   padding: 10px;
-  vertical-align: center;
 }
 
 .task .task-info {

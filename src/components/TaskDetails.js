@@ -1,6 +1,7 @@
 import React from "react";
 import { Col } from "antd";
 import { Input, DatePicker } from "antd";
+import moment from "moment";
 
 export default function TaskDetails(props) {
   return (
@@ -28,14 +29,21 @@ export default function TaskDetails(props) {
         placeholder="Task name"
         size="large"
         style={{ marginBottom: "20px", height: "60px", fontSize: "25px" }}
-        onChange={e => props.changeName(e.target.value)}
+        onChange={e => props.changeInfo("name", e.target.value)}
         value={props.task.name}
       />
       <DatePicker
+        showTime={{ use12Hours: true }}
         placeholder="Select date and time"
-        showTime="true"
+        format="YYYY-MM-DD h:mm a"
         size="large"
         style={{ minWidth: "100%", maxWidth: "100%" }}
+        onChange={(moment, time) => props.changeInfo("time", time)}
+        value={
+          props.task.time === "Undated"
+            ? null
+            : moment(props.task.time, "YYYY-MM-DD h:mm a")
+        }
       />
     </Col>
   );
