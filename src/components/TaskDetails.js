@@ -33,16 +33,16 @@ export default function TaskDetails(props) {
         value={props.task.name}
       />
       <DatePicker
-        showTime={{ use12Hours: true }}
+        showTime
         placeholder="Select date and time"
-        format="YYYY-MM-DD h:mm a"
+        format="YYYY-MM-DD HH:mm"
         size="large"
         style={{ minWidth: "100%", maxWidth: "100%" }}
         onChange={(moment, time) => props.changeInfo("time", time)}
         value={
           props.task.time === "Undated"
             ? null
-            : moment(props.task.time, "YYYY-MM-DD h:mm a")
+            : moment(props.task.time, "YYYY-MM-DD HH:mm")
         }
       />
     </Col>

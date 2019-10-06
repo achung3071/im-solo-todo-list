@@ -14,7 +14,7 @@ export default function Task(props) {
       </div>
       <div className="task-icons">
         <Icon
-          type={props.name === "All Tasks" ? "check" : "undo"}
+          type={props.name === "Completed" ? "undo" : "check"}
           style={{
             position: "absolute",
             top: "50%",

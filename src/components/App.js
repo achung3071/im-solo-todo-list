@@ -12,8 +12,9 @@ export default class App extends React.Component {
     this.state = {
       tasks: [],
       currFolder: "All Tasks",
-      folders: ["All Tasks", "Day-by-Day", "Completed"],
-      currTask: null
+      folders: ["Search", "All Tasks", "Day-by-Day", "Completed"],
+      currTask: null,
+      query: ""
     };
     this.addTask = this.addTask.bind(this);
     this.changeFolder = this.changeFolder.bind(this);
@@ -22,6 +23,7 @@ export default class App extends React.Component {
     this.completeTask = this.completeTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
     this.revertTask = this.revertTask.bind(this);
+    this.search = this.search.bind(this);
   }
 
   addTask(name) {
@@ -33,12 +35,10 @@ export default class App extends React.Component {
 
   changeFolder(item) {
     let key = parseInt(item.key);
-    if (key !== 0) {
-      this.setState({
-        currFolder: this.state.folders[key - 1],
-        currTask: null
-      });
-    }
+    this.setState({
+      currFolder: this.state.folders[key],
+      currTask: null
+    });
   }
 
   changeTaskInfo(changeType, newInfo) {
@@ -49,6 +49,18 @@ export default class App extends React.Component {
     let newTask = { ...currTask };
     newTask[changeType] = newInfo;
     newArr[taskIndex] = newTask;
+    if (changeType === "time") {
+      newArr.sort((a, b) => {
+        if (a.time === "Undated") {
+          return 1;
+        } else if (b.time === "Undated") {
+          return -1;
+        }
+        let time1 = parseInt(a.time.replace(/[\s-:]/g, ""));
+        let time2 = parseInt(b.time.replace(/[\s-:]/g, ""));
+        return time1 - time2;
+      });
+    }
     this.setState({
       tasks: newArr,
       currTask: newTask
@@ -84,6 +96,7 @@ export default class App extends React.Component {
   }
 
   revertTask(task) {
+    console.log(this.state);
     let currTask = task === this.state.currTask ? null : this.state.currTask;
     let taskIndex = this.state.tasks.indexOf(task);
     let tasks = [...this.state.tasks];
@@ -91,10 +104,18 @@ export default class App extends React.Component {
     this.setState({ tasks, currTask });
   }
 
+  search(query) {
+    this.setState({ query });
+  }
+
   render() {
     return (
       <Layout style={{ height: "100vh" }}>
-        <Nav folders={this.state.folders} change={this.changeFolder} />
+        <Nav
+          folders={this.state.folders}
+          change={this.changeFolder}
+          search={this.search}
+        />
         <Layout>
           <Content style={{ margin: "16px" }}>
             {
@@ -110,6 +131,7 @@ export default class App extends React.Component {
                     ? this.revertTask
                     : this.completeTask
                 }
+                query={this.state.query}
               />
             }
             {this.state.currTask && (

@@ -4,7 +4,16 @@ import TaskAdder from "./TaskAdder";
 import { Col } from "antd";
 
 export default function TaskList(props) {
-  let statusMatch = props.name === "Completed" ? "complete" : "incomplete";
+  let nameOrStatus;
+  let matchingString;
+  if (props.name === "Search") {
+    nameOrStatus = "name";
+    matchingString = props.query;
+  } else {
+    nameOrStatus = "status";
+    matchingString = props.name === "Completed" ? "complete" : "incomplete";
+  }
+
   return (
     <Col
       span={12}
@@ -16,9 +25,9 @@ export default function TaskList(props) {
       }}
     >
       {props.name === "All Tasks" && <TaskAdder add={props.add} />}
-      {props.tasks.map(
-        (task, index) =>
-          task.status === statusMatch && (
+      {props.tasks.map((task, index) => {
+        return (
+          task[nameOrStatus].indexOf(matchingString) === 0 && (
             <Task
               name={props.name}
               task={task}
@@ -29,7 +38,8 @@ export default function TaskList(props) {
               modify={props.modify}
             />
           )
-      )}
+        );
+      })}
     </Col>
   );
 }

@@ -11,15 +11,17 @@ export default function Nav(props) {
         <Menu.Item key="0">
           <Search
             placeholder="Search task"
-            onSearch={value => console.log(value)}
+            onChange={e => props.search(e.target.value)}
           />
         </Menu.Item>
-        {props.folders.map((name, index) => (
-          <Menu.Item key={index + 1}>
-            <Folder name={name} key={index} />
-          </Menu.Item>
-        ))}
-        <Folder />
+        {props.folders.map(
+          (name, index) =>
+            index !== 0 && (
+              <Menu.Item key={index}>
+                <Folder name={name} key={index} />
+              </Menu.Item>
+            )
+        )}
       </Menu>
     </Sider>
   );
