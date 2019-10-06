@@ -29,7 +29,6 @@ export default function TaskList(props) {
         return (
           task[nameOrStatus].indexOf(matchingString) === 0 && (
             <Task
-              name={props.name}
               task={task}
               color={task === props.currTask ? "lightblue" : "white"}
               click={props.click}
