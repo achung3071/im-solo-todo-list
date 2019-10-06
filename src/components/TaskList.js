@@ -27,7 +27,9 @@ export default function TaskList(props) {
       {props.name === "All Tasks" && <TaskAdder add={props.add} />}
       {props.tasks.map((task, index) => {
         return (
-          task[nameOrStatus].indexOf(matchingString) === 0 && (
+          // currently edited task should not disappear on search re-rendering
+          (task[nameOrStatus].indexOf(matchingString) === 0 ||
+            task === props.currTask) && (
             <Task
               task={task}
               color={task === props.currTask ? "lightblue" : "white"}
