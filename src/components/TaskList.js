@@ -34,7 +34,9 @@ export default function TaskList(props) {
               click={props.click}
               key={index}
               delete={props.delete}
-              modify={props.modify}
+              modify={
+                task.status === "complete" ? props.revert : props.complete
+              }
             />
           )
         );

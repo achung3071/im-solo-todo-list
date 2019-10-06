@@ -126,11 +126,8 @@ export default class App extends React.Component {
                 click={this.clickTask}
                 add={this.addTask}
                 delete={this.deleteTask}
-                modify={
-                  this.state.currFolder === "Completed"
-                    ? this.revertTask
-                    : this.completeTask
-                }
+                revert={this.revertTask}
+                complete={this.completeTask}
                 query={this.state.query}
               />
             }
