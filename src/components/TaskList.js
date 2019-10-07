@@ -6,7 +6,10 @@ import { Col } from "antd";
 export default function TaskList(props) {
   function shouldRender(task) {
     if (props.name === "Search") {
-      return task.name.indexOf(props.query) === 0 || task === props.currTask;
+      return (
+        task.name.toLowerCase().indexOf(props.query.toLowerCase()) === 0 ||
+        task === props.currTask
+      );
     } else if (props.name === "All Tasks") {
       return task.status === "incomplete";
     } else if (props.name === "Completed") {
