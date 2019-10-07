@@ -12,10 +12,10 @@ export default class App extends React.Component {
     this.state = {
       tasks: [],
       currFolder: "All Tasks",
-      folders: ["Search", "All Tasks", "Day-by-Day", "Completed"],
+      folders: ["Search", "All Tasks", "Completed"],
       currTask: null,
       query: "",
-      allTags: []
+      groups: []
     };
     this.addTag = this.addTag.bind(this);
     this.addTask = this.addTask.bind(this);
@@ -23,6 +23,7 @@ export default class App extends React.Component {
     this.changeTaskInfo = this.changeTaskInfo.bind(this);
     this.clickTask = this.clickTask.bind(this);
     this.completeTask = this.completeTask.bind(this);
+    this.deleteTag = this.deleteTag.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
     this.revertTask = this.revertTask.bind(this);
     this.search = this.search.bind(this);
@@ -37,13 +38,13 @@ export default class App extends React.Component {
       newTask.tags = [...tags, value];
       tasks[taskIndex] = newTask;
     }
-    let allTags = this.state.allTags.includes(value)
-      ? this.state.allTags
-      : [...this.state.allTags, value];
+    let groups = this.state.groups.includes(value)
+      ? this.state.groups
+      : [...this.state.groups, value];
     this.setState({
       currTask: newTask,
       tasks,
-      allTags
+      groups
     });
   }
 
@@ -56,8 +57,15 @@ export default class App extends React.Component {
 
   changeFolder(item) {
     let key = parseInt(item.key);
+    let arr;
+    if (key < 3) {
+      arr = this.state.folders;
+    } else {
+      arr = this.state.groups;
+      key -= 3;
+    }
     this.setState({
-      currFolder: this.state.folders[key],
+      currFolder: arr[key],
       currTask: null
     });
   }
@@ -108,6 +116,29 @@ export default class App extends React.Component {
     this.setState({ tasks, currTask });
   }
 
+  deleteTag(removedTag) {
+    let taskIndex = this.state.tasks.indexOf(this.state.currTask);
+    let newTask = { ...this.state.currTask };
+    let tasks = [...this.state.tasks];
+    newTask.tags = newTask.tags.filter(tag => tag !== removedTag);
+    tasks[taskIndex] = newTask;
+    let removedTagExists = false;
+    for (let i = 0; i < tasks.length; i++) {
+      if (tasks[i].tags.includes(removedTag)) {
+        removedTagExists = true;
+        break;
+      }
+    }
+    let groups = removedTagExists
+      ? this.state.groups
+      : this.state.groups.filter(tag => tag !== removedTag);
+    this.setState({
+      currTask: newTask,
+      tasks,
+      groups
+    });
+  }
+
   deleteTask(task) {
     let currTask = task === this.state.currTask ? null : this.state.currTask;
     let taskIndex = this.state.tasks.indexOf(task);
@@ -133,6 +164,7 @@ export default class App extends React.Component {
       <Layout style={{ height: "100vh" }}>
         <Nav
           folders={this.state.folders}
+          groups={this.state.groups}
           change={this.changeFolder}
           search={this.search}
         />
@@ -155,6 +187,7 @@ export default class App extends React.Component {
               <TaskDetails
                 task={this.state.currTask}
                 add={this.addTag}
+                delete={this.deleteTag}
                 changeInfo={this.changeTaskInfo}
               />
             )}

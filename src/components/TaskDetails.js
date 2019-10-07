@@ -45,7 +45,11 @@ export default function TaskDetails(props) {
             : moment(props.task.time, "YYYY-MM-DD HH:mm")
         }
       />
-      <EditableTagGroup task={props.task} add={props.add} />
+      <EditableTagGroup
+        task={props.task}
+        add={props.add}
+        delete={props.delete}
+      />
     </Col>
   );
 }

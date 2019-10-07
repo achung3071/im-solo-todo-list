@@ -4,14 +4,16 @@ import TaskAdder from "./TaskAdder";
 import { Col } from "antd";
 
 export default function TaskList(props) {
-  let nameOrStatus;
-  let matchingString;
-  if (props.name === "Search") {
-    nameOrStatus = "name";
-    matchingString = props.query;
-  } else {
-    nameOrStatus = "status";
-    matchingString = props.name === "Completed" ? "complete" : "incomplete";
+  function shouldRender(task) {
+    if (props.name === "Search") {
+      return task.name.indexOf(props.query) === 0 || task === props.currTask;
+    } else if (props.name === "All Tasks") {
+      return task.status === "incomplete";
+    } else if (props.name === "Completed") {
+      return task.status === "complete";
+    } else {
+      return task.tags.includes(props.name);
+    }
   }
 
   return (
@@ -27,9 +29,7 @@ export default function TaskList(props) {
       {props.name === "All Tasks" && <TaskAdder add={props.add} />}
       {props.tasks.map((task, index) => {
         return (
-          // currently edited task should not disappear on search re-rendering
-          (task[nameOrStatus].indexOf(matchingString) === 0 ||
-            task === props.currTask) && (
+          shouldRender(task) && (
             <Task
               task={task}
               color={task === props.currTask ? "lightblue" : "white"}
