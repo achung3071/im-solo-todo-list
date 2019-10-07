@@ -29,7 +29,9 @@ export default class EditableTagGroup extends React.Component {
   }
 
   handleInputConfirm() {
-    this.props.add(this.state.inputValue);
+    if (this.state.inputValue !== "") {
+      this.props.add(this.state.inputValue);
+    }
     this.setState({
       inputVisible: false,
       inputValue: ""

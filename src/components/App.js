@@ -41,18 +41,37 @@ export default class App extends React.Component {
     let groups = this.state.groups.includes(value)
       ? this.state.groups
       : [...this.state.groups, value];
-    this.setState({
-      currTask: newTask,
-      tasks,
-      groups
-    });
+    this.setState(
+      {
+        currTask: newTask,
+        tasks,
+        groups
+      },
+      this.fetchData.bind(
+        this,
+        "PUT",
+        res => console.log(res),
+        newTask,
+        newTask.id
+      )
+    );
   }
 
   addTask(name) {
     if (name.length === 0) return;
     let tasks = [...this.state.tasks];
-    tasks.push({ name, time: "Undated", status: "incomplete", tags: [] });
-    this.setState({ tasks });
+    let newTask = {
+      name,
+      time: "Undated",
+      status: "incomplete",
+      tags: [],
+      id: tasks.length + 1
+    };
+    tasks.push(newTask);
+    this.setState(
+      { tasks },
+      this.fetchData.bind(this, "POST", res => console.log(res), newTask)
+    );
   }
 
   changeFolder(item) {
@@ -79,21 +98,21 @@ export default class App extends React.Component {
     newTask[changeType] = newInfo;
     newArr[taskIndex] = newTask;
     if (changeType === "time") {
-      newArr.sort((a, b) => {
-        if (a.time === "Undated") {
-          return 1;
-        } else if (b.time === "Undated") {
-          return -1;
-        }
-        let time1 = parseInt(a.time.replace(/[\s-:]/g, ""));
-        let time2 = parseInt(b.time.replace(/[\s-:]/g, ""));
-        return time1 - time2;
-      });
+      this.sortTasks(newArr);
     }
-    this.setState({
-      tasks: newArr,
-      currTask: newTask
-    });
+    this.setState(
+      {
+        tasks: newArr,
+        currTask: newTask
+      },
+      this.fetchData.bind(
+        this,
+        "PUT",
+        res => console.log(res),
+        newTask,
+        newTask.id
+      )
+    );
   }
 
   clickTask(task) {
@@ -112,8 +131,33 @@ export default class App extends React.Component {
     let currTask = task === this.state.currTask ? null : this.state.currTask;
     let taskIndex = this.state.tasks.indexOf(task);
     let tasks = [...this.state.tasks];
-    tasks[taskIndex].status = "complete";
-    this.setState({ tasks, currTask });
+    let newTask = tasks[taskIndex];
+    newTask.status = "complete";
+    this.setState(
+      { tasks, currTask },
+      this.fetchData.bind(
+        this,
+        "PUT",
+        res => console.log(res),
+        newTask,
+        newTask.id
+      )
+    );
+  }
+
+  componentDidMount() {
+    this.fetchData("GET", res => {
+      let groups = [];
+      res.forEach(task => {
+        task.tags.forEach(tag => {
+          if (!groups.includes(tag)) {
+            groups.push(tag);
+          }
+        });
+      });
+      this.sortTasks(res);
+      this.setState({ tasks: res, groups });
+    });
   }
 
   deleteTag(removedTag) {
@@ -132,31 +176,87 @@ export default class App extends React.Component {
     let groups = removedTagExists
       ? this.state.groups
       : this.state.groups.filter(tag => tag !== removedTag);
-    this.setState({
-      currTask: newTask,
-      tasks,
-      groups
-    });
+    this.setState(
+      {
+        currTask: newTask,
+        tasks,
+        groups
+      },
+      this.fetchData.bind(
+        this,
+        "PUT",
+        res => console.log(res),
+        newTask,
+        newTask.id
+      )
+    );
   }
 
   deleteTask(task) {
     let currTask = task === this.state.currTask ? null : this.state.currTask;
-    let taskIndex = this.state.tasks.indexOf(task);
-    let tasks = [...this.state.tasks];
-    tasks.splice(taskIndex, 1);
-    this.setState({ tasks, currTask });
+    let tasks = this.state.tasks.filter(element => element !== task);
+    this.setState(
+      { tasks, currTask },
+      this.fetchData.bind(
+        this,
+        "DELETE",
+        res => console.log(res),
+        task,
+        task.id
+      )
+    );
+  }
+
+  fetchData(requestType, callback, task, id = "") {
+    let params = {
+      method: requestType,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+    if (requestType !== "GET" || requestType !== "DELETE") {
+      params.body = JSON.stringify(task);
+    }
+    fetch(`http://localhost:4000/tasks/${id}`, params)
+      .then(res => res.json())
+      .then(res => {
+        callback(res);
+      });
   }
 
   revertTask(task) {
     let currTask = task === this.state.currTask ? null : this.state.currTask;
     let taskIndex = this.state.tasks.indexOf(task);
     let tasks = [...this.state.tasks];
-    tasks[taskIndex].status = "incomplete";
-    this.setState({ tasks, currTask });
+    let newTask = tasks[taskIndex];
+    newTask.status = "incomplete";
+    this.setState(
+      { tasks, currTask },
+      this.fetchData.bind(
+        this,
+        "PUT",
+        res => console.log(res),
+        newTask,
+        newTask.id
+      )
+    );
   }
 
   search(query) {
     this.setState({ query });
+  }
+
+  sortTasks(taskArr) {
+    taskArr.sort((a, b) => {
+      if (a.time === "Undated") {
+        return 1;
+      } else if (b.time === "Undated") {
+        return -1;
+      }
+      let time1 = parseInt(a.time.replace(/[\s-:]/g, ""));
+      let time2 = parseInt(b.time.replace(/[\s-:]/g, ""));
+      return time1 - time2;
+    });
   }
 
   render() {
