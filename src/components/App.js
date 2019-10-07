@@ -14,8 +14,10 @@ export default class App extends React.Component {
       currFolder: "All Tasks",
       folders: ["Search", "All Tasks", "Day-by-Day", "Completed"],
       currTask: null,
-      query: ""
+      query: "",
+      allTags: []
     };
+    this.addTag = this.addTag.bind(this);
     this.addTask = this.addTask.bind(this);
     this.changeFolder = this.changeFolder.bind(this);
     this.changeTaskInfo = this.changeTaskInfo.bind(this);
@@ -26,10 +28,29 @@ export default class App extends React.Component {
     this.search = this.search.bind(this);
   }
 
+  addTag(value) {
+    let taskIndex = this.state.tasks.indexOf(this.state.currTask);
+    let newTask = { ...this.state.currTask };
+    let tasks = [...this.state.tasks];
+    let tags = newTask.tags;
+    if (value && tags.indexOf(value) === -1) {
+      newTask.tags = [...tags, value];
+      tasks[taskIndex] = newTask;
+    }
+    let allTags = this.state.allTags.includes(value)
+      ? this.state.allTags
+      : [...this.state.allTags, value];
+    this.setState({
+      currTask: newTask,
+      tasks,
+      allTags
+    });
+  }
+
   addTask(name) {
     if (name.length === 0) return;
     let tasks = [...this.state.tasks];
-    tasks.push({ name, time: "Undated", status: "incomplete" });
+    tasks.push({ name, time: "Undated", status: "incomplete", tags: [] });
     this.setState({ tasks });
   }
 
@@ -96,7 +117,6 @@ export default class App extends React.Component {
   }
 
   revertTask(task) {
-    console.log(this.state);
     let currTask = task === this.state.currTask ? null : this.state.currTask;
     let taskIndex = this.state.tasks.indexOf(task);
     let tasks = [...this.state.tasks];
@@ -134,6 +154,7 @@ export default class App extends React.Component {
             {this.state.currTask && (
               <TaskDetails
                 task={this.state.currTask}
+                add={this.addTag}
                 changeInfo={this.changeTaskInfo}
               />
             )}

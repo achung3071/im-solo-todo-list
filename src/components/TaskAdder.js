@@ -16,14 +16,25 @@ export default class TaskAdder extends React.Component {
     return (
       <div className="task-adder">
         <div className="task-input">
-          <Input placeholder="New Task" onChange={this.changeNewTask} />
+          <Input
+            placeholder="New Task"
+            onChange={this.changeNewTask}
+            onPressEnter={() => {
+              this.props.add(this.state.newTask);
+              this.setState({ newTask: "" });
+            }}
+            value={this.state.newTask}
+          />
         </div>
         <div className="add-task-button">
           <Button
             type="primary"
             shape="circle"
             icon="plus"
-            onClick={() => this.props.add(this.state.newTask)}
+            onClick={() => {
+              this.props.add(this.state.newTask);
+              this.setState({ newTask: "" });
+            }}
           />
         </div>
       </div>

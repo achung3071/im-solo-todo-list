@@ -1,6 +1,6 @@
 import React from "react";
-import { Col } from "antd";
-import { Input, DatePicker } from "antd";
+import { Col, Input, DatePicker } from "antd";
+import EditableTagGroup from "./EditableTagGroup";
 import moment from "moment";
 
 export default function TaskDetails(props) {
@@ -37,7 +37,7 @@ export default function TaskDetails(props) {
         placeholder="Select date and time"
         format="YYYY-MM-DD HH:mm"
         size="large"
-        style={{ minWidth: "100%", maxWidth: "100%" }}
+        style={{ marginBottom: "20px", minWidth: "100%", maxWidth: "100%" }}
         onChange={(moment, time) => props.changeInfo("time", time)}
         value={
           props.task.time === "Undated"
@@ -45,6 +45,7 @@ export default function TaskDetails(props) {
             : moment(props.task.time, "YYYY-MM-DD HH:mm")
         }
       />
+      <EditableTagGroup task={props.task} add={props.add} />
     </Col>
   );
 }
