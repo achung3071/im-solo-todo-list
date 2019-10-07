@@ -60,12 +60,18 @@ export default class App extends React.Component {
   addTask(name) {
     if (name.length === 0) return;
     let tasks = [...this.state.tasks];
+    let greatestId = 1;
+    for (let i = 0; i < tasks.length; i++) {
+      if (tasks[i].id > greatestId) {
+        greatestId = tasks[i].id;
+      }
+    }
     let newTask = {
       name,
       time: "Undated",
       status: "incomplete",
       tags: [],
-      id: tasks.length + 1
+      id: greatestId + 1
     };
     tasks.push(newTask);
     this.setState(
